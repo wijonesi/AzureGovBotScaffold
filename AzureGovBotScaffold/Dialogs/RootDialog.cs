@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
@@ -15,17 +18,18 @@ namespace AzureGovBotScaffold.Dialogs
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
+        private virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var activity = await result as Activity;
+            var activity = await result;
 
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+            await context.Forward(new GeneralQnAMakerDialog(), ResumeAfterGeneralQnADialog, activity, CancellationToken.None);
+        }
 
-            // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+        private async Task ResumeAfterGeneralQnADialog(IDialogContext context, IAwaitable<object> result)
+        {
+            var resultFromQnA = await result;
 
-            context.Wait(MessageReceivedAsync);
+            context.Wait(this.MessageReceivedAsync);
         }
     }
 }

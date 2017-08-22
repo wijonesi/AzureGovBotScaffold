@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -40,6 +41,21 @@ namespace AzureGovBotScaffold
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
+                IConversationUpdateActivity conversationUpdated = message as IConversationUpdateActivity;
+                if (conversationUpdated != null)
+                {
+                    ConnectorClient client = new ConnectorClient(new Uri(message.ServiceUrl));
+
+                    foreach (var member in conversationUpdated.MembersAdded ?? System.Array.Empty<ChannelAccount>())
+                    {
+                        if (member.Id == conversationUpdated.Recipient.Id)
+                        {
+                            Activity reply = message.CreateReply($"Hi, I'm a bot. How may I assist you?");
+
+                            client.Conversations.ReplyToActivityAsync(reply);
+                        }
+                    }
+                }
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
