@@ -12,7 +12,7 @@ namespace AzureGovBotScaffold.Dialogs
         public override async Task NoMatchHandler(IDialogContext context, string originalQueryText)
         {
             await context.PostAsync($"Sorry, I couldn't find an answer for '{originalQueryText}'.");
-            context.Done(false;)
+            context.Done(false);
         }
 
         public override async Task DefaultMatchHandler(IDialogContext context, string originalQueryText, QnAMakerResult result)

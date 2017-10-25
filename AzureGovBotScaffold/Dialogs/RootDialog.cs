@@ -18,11 +18,13 @@ namespace AzureGovBotScaffold.Dialogs
             return Task.CompletedTask;
         }
 
-        private virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
-            await context.Forward(new GeneralQnAMakerDialog(), ResumeAfterGeneralQnADialog, activity, CancellationToken.None);
+            //await context.Forward(new GeneralQnAMakerDialog(), ResumeAfterGeneralQnADialog, activity, CancellationToken.None);
+
+            
         }
 
         private async Task ResumeAfterGeneralQnADialog(IDialogContext context, IAwaitable<object> result)
